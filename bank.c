@@ -1,8 +1,8 @@
+#include "bank.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bank.h"
-#include "database.h"
+#include "config.h"
 
 int account_count = 0;
 Account *accounts;

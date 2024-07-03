@@ -1,9 +1,9 @@
+#include "database.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include "database.h"
 #include "config.h"
-#include "directory.h"
+#include "utils/directory.h"
 
 int load_accounts(Account *accounts, int *account_count)
 {

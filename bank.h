@@ -1,6 +1,7 @@
 #ifndef BANK_H
 #define BANK_H
 #include "database.h"
+#include "types.h"
 
 // Initialisation et finalisation
 int initialize_bank_system(void);
