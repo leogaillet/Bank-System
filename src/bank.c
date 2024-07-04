@@ -1,17 +1,18 @@
-#include "bank.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
+#include "../include/bank.h"
+#include "../include/config.h"
 
 int account_count = 0;
-Account *accounts;
+Account accounts[MAX_ACCOUNTS];
 
 int transaction_count = 0;
-Transaction *transactions;
+Transaction transactions[MAX_TRANSACTIONS];
 
 int initialize_bank_system(void)
 {
+
     // Initialiser les ressources nécessaires
     if (load_accounts(accounts, &account_count) != 0)
     {
@@ -23,6 +24,7 @@ int initialize_bank_system(void)
         printf("Impossible de charger les transactions !\n");
         return 1;
     }
+
     return 0;
 }
 
@@ -39,6 +41,7 @@ int shutdown_bank_system(void)
         printf("Impossible de sauvegarder les transactions !\n");
         return 1;
     }
+
     return 0;
 }
 

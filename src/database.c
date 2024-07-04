@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <strings.h>
 #include "config.h"
-#include "utils/directory.h"
+#include "../include/directory.h"
 
-int load_accounts(Account *accounts, int *account_count)
+int load_accounts(Account accounts[], int *account_count)
 {
     char *account_file = (char *)malloc(255 * sizeof(char));
     sprintf(account_file, "%s/%s", DATABASE_FOLDER, ACCOUNT_FILE);
@@ -35,7 +35,7 @@ int load_accounts(Account *accounts, int *account_count)
     return 0;
 }
 
-int save_accounts(Account *accounts, int account_count)
+int save_accounts(Account accounts[], int account_count)
 {
     char *account_file = (char *)malloc(255 * sizeof(char));
     sprintf(account_file, "%s/%s", DATABASE_FOLDER, ACCOUNT_FILE);
@@ -56,7 +56,7 @@ int save_accounts(Account *accounts, int account_count)
     return 0;
 }
 
-int load_transactions(Transaction *transactions, int *transaction_count)
+int load_transactions(Transaction transactions[], int *transaction_count)
 {
     char *transaction_file = (char *)malloc(255 * sizeof(char));
     sprintf(transaction_file, "%s/%s", DATABASE_FOLDER, TRANSACTION_FILE);
@@ -87,7 +87,7 @@ int load_transactions(Transaction *transactions, int *transaction_count)
     return 0;
 }
 
-int save_transactions(Transaction *transactions, int transaction_count)
+int save_transactions(Transaction transactions[], int transaction_count)
 {
     char *transaction_file = (char *)malloc(255 * sizeof(char));
     sprintf(transaction_file, "%s/%s", DATABASE_FOLDER, TRANSACTION_FILE);
