@@ -1,5 +1,4 @@
-*.o
-out/
 .vscode/
+bin/
+build/
 storage/
-*.exe

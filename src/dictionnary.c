@@ -64,6 +64,22 @@ Account *dict_get(char *account_holder)
     return NULL;
 }
 
+// Fonction pour récupérer un compte à partir de l'identifiant du compte
+Account *dict_get_from_id(const int account_id)
+{
+    Node *current = head;
+    while (current != NULL)
+    {
+        if (current->account->account_id == account_id)
+        {
+            return current->account;
+        }
+        current = current->next;
+    }
+    // Si aucun compte correspondant n'est trouvé
+    return NULL;
+}
+
 // Fonction pour retirer un compte à partir du nom du titulaire
 void dict_remove(char *account_holder)
 {

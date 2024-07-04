@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "../include/bank.h"
 #include "../include/config.h"
+#include "../include/dictionnary.h"
 
 int account_count = 0;
 Account accounts[MAX_ACCOUNTS];
@@ -12,6 +14,7 @@ Transaction transactions[MAX_TRANSACTIONS];
 
 int initialize_bank_system(void)
 {
+    srand(time(NULL));
 
     // Initialiser les ressources nécessaires
     if (load_accounts(accounts, &account_count) != 0)
@@ -42,25 +45,54 @@ int shutdown_bank_system(void)
         return 1;
     }
 
+    dict_free();
     return 0;
 }
 
 int create_account(const char *account_holder, double initial_balance)
 {
     // Créer un compte bancaire
+    Account acc;
+    acc.account_id = (rand() % MAX_ACCOUNTS);
+    strcpy(acc.account_holder, account_holder);
+    acc.balance = initial_balance;
+
+    dict_set(strdup(account_holder), &acc);
     return 0;
+}
+
+Account *get_account(const char *account_holder)
+{
+    return dict_get(strdup(account_holder));
+}
+
+Account *get_account_from_id(const int account_id)
+{
+    return dict_get_from_id(account_id);
 }
 
 int close_account(int account_number)
 {
     // Fermer un compte bancaire
-    return 0;
+    Account *acc = dict_get_from_id(account_number);
+
+    if (acc == NULL)
+        return 0;
+
+    dict_remove(acc->account_holder);
+
+    return 1;
 }
 
 double get_balance(int account_number)
 {
     // Retourner le solde du compte
-    return 0;
+    Account *acc = dict_get_from_id(account_number);
+
+    if (acc == NULL)
+        return 0;
+
+    return acc->balance;
 }
 
 int deposit(int account_number, double amount)
