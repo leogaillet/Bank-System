@@ -3,6 +3,9 @@
 #include <string.h>
 #include "../include/bank.h"
 #include "../include/dictionnary.h"
+#include "../include/menu.h"
+
+void menu(void);
 
 int main(void)
 {
@@ -14,7 +17,59 @@ int main(void)
     else
         printf("Initialisation du système bancaire terminée !\n");
 
-    printf("\n");
+    menu();
+
+    if (shutdown_bank_system() != 0)
+    {
+        printf("Erreur lors de la fermeture du système bancaire !\n");
+        return 1;
+    }
+    else
+        printf("Fermeture du système bancaire terminée !\n");
+
+    return 0;
+}
+
+void menu(void)
+{
+    char input[99];
+    do
+    {
+        printf("Veuillez saisir une commande : ");
+        scanf("%99s", input);
+
+        if (strcmp(input, "help") == 0)
+        {
+        }
+        else if (strcmp(input, "stop") == 0)
+        {
+        }
+        else if (strcmp(input, "list") == 0)
+            menu_account_list();
+
+        else if (strcmp(input, "new") == 0)
+            menu_account_add();
+
+        else if (strcmp(input, "remove") == 0)
+            menu_account_remove();
+
+        else if (strcmp(input, "balance") == 0)
+        {
+        }
+        else if (strcmp(input, "account") == 0)
+            menu_account_get();
+        else if (strcmp(input, "transactions") == 0)
+        {
+        }
+        else
+        {
+            printf("Commande introuvable\n");
+        }
+    } while (strcmp(input, "stop") != 0);
+}
+
+/*
+
     // Création de quelques comptes
     create_account("John Doe", 1000.0);
     create_account("Jane Smith", 2000.0);
@@ -56,13 +111,4 @@ int main(void)
         printf("Aucun compte trouvé pour le titulaire : %s\n", remove_name);
     }
 
-    if (shutdown_bank_system() != 0)
-    {
-        printf("Erreur lors de la fermeture du système bancaire !\n");
-        return 1;
-    }
-    else
-        printf("Fermeture du système bancaire terminée !\n");
-
-    return 0;
-}
+*/

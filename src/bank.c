@@ -22,6 +22,12 @@ int initialize_bank_system(void)
         printf("Impossible de charger les comptes bancaires !\n");
         return 1;
     }
+    for (int i = 0; i < account_count; i++)
+    {
+        printf("Acc n°%d\n", accounts[i].account_id);
+    }
+    parse_arr_to_dict(accounts, account_count, MAX_ACCOUNTS);
+
     if (load_transactions(transactions, &transaction_count) != 0)
     {
         printf("Impossible de charger les transactions !\n");
@@ -34,11 +40,17 @@ int initialize_bank_system(void)
 int shutdown_bank_system(void)
 {
     // Libérer les ressources allouées
+    parse_dict_do_arr(&accounts, &account_count, MAX_ACCOUNTS, dict_get_node());
+    for (int i = 0; i < account_count; i++)
+    {
+        printf("Acc n°%d\n", accounts[i].account_id);
+    }
     if (save_accounts(accounts, account_count) != 0)
     {
         printf("Impossible de sauvegarder les comptes bancaires !\n");
         return 1;
     }
+
     if (save_transactions(transactions, transaction_count) != 0)
     {
         printf("Impossible de sauvegarder les transactions !\n");
@@ -58,7 +70,8 @@ int create_account(const char *account_holder, double initial_balance)
     acc.balance = initial_balance;
 
     dict_set(strdup(account_holder), &acc);
-    return 0;
+    account_count++;
+    return acc.account_id;
 }
 
 Account *get_account(const char *account_holder)
@@ -80,6 +93,7 @@ int close_account(int account_number)
         return 0;
 
     dict_remove(acc->account_holder);
+    account_count--;
 
     return 1;
 }

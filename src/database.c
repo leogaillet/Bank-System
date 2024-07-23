@@ -48,7 +48,7 @@ int save_accounts(Account accounts[], int account_count)
     }
 
     fwrite(&account_count, sizeof(int), 1, f);
-    fread(accounts, sizeof(Account), account_count, f);
+    fwrite(accounts, sizeof(Account), account_count, f);
 
     fclose(f);
     free(account_file);

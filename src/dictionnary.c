@@ -6,6 +6,17 @@
 
 // Pointeur de tête de la liste chaînée (dictionnaire)
 Node *head = NULL;
+unsigned int dict_size = 0;
+
+Node *dict_get_node()
+{
+    return head;
+}
+
+unsigned int dict_length()
+{
+    return dict_size;
+}
 
 // Fonction pour ajouter un compte au dictionnaire
 void dict_set(char *account_holder, Account *account)
@@ -14,7 +25,6 @@ void dict_set(char *account_holder, Account *account)
     Node *new_node = (Node *)malloc(sizeof(Node));
     if (new_node == NULL)
     {
-        printf("Erreur : Échec de l'allocation mémoire pour le nouveau nœud.\n");
         return;
     }
 
@@ -22,7 +32,6 @@ void dict_set(char *account_holder, Account *account)
     Account *new_account = (Account *)malloc(sizeof(Account));
     if (new_account == NULL)
     {
-        printf("Erreur : Échec de l'allocation mémoire pour la nouvelle structure Account.\n");
         free(new_node);
         return;
     }
@@ -46,6 +55,8 @@ void dict_set(char *account_holder, Account *account)
         new_node->next = head;
         head = new_node;
     }
+
+    dict_size++;
 }
 
 // Fonction pour récupérer un compte à partir du nom du titulaire
@@ -103,16 +114,15 @@ void dict_remove(char *account_holder)
             // Libérer la mémoire allouée pour la structure Account et le nœud
             free(current->account);
             free(current);
-            printf("Le compte pour %s a été retiré avec succès.\n", account_holder);
             return;
         }
 
         prev = current;
         current = current->next;
+        dict_size--;
     }
 
     // Si aucun compte correspondant n'est trouvé
-    printf("Aucun compte trouvé pour le titulaire : %s\n", account_holder);
 }
 
 void dict_free(void)
@@ -186,3 +196,25 @@ int main()
 }
 
 */
+
+void parse_arr_to_dict(Account accounts[], int account_length, const int ACCOUNT_MAX_SIZE)
+{
+    for (int i = 0; i < account_length && i < ACCOUNT_MAX_SIZE; i++)
+        dict_set(accounts[i].account_holder, &accounts[i]);
+}
+void parse_dict_do_arr(Account *accounts, int *account_length, const int ACCOUNT_MAX_SIZE, Node *node)
+{
+    int i = 0;
+
+    while (node != NULL && i < ACCOUNT_MAX_SIZE)
+    {
+        strcpy(accounts[i].account_holder, node->account->account_holder);
+        accounts[i].account_id = node->account->account_id;
+        accounts[i].balance = node->account->balance;
+
+        i++;
+        node = node->next;
+    }
+
+    *account_length = i;
+}
