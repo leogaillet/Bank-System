@@ -13,7 +13,7 @@ int close_account(int account_number);
 Account *get_account_from_id(const int account_id);
 Account *get_account(const char *account_holder);
 
-// Opérations de transations
+// Operations de transations
 double get_balance(int account_number);
 int deposit(int account_number, double amount);
 int withdraw(int account_number, double amount);

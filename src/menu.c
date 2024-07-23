@@ -23,7 +23,7 @@ int menu_account_add(void)
 
     int account_id = create_account(account_holder, account_balance);
 
-    printf("Votre compte a été créé, l'identifiant du compte est : %d\n", account_id);
+    printf("Votre compte a ete cree, l'identifiant du compte est : %d\n", account_id);
 
     return 0;
 }
@@ -31,7 +31,7 @@ int menu_account_add(void)
 int menu_account_remove(void)
 {
     char input[32];
-    printf("Veuillez saisir le numéro du compte : ");
+    printf("Veuillez saisir le numero du compte : ");
     scanf("%32s", input);
 
     const int account_id = atoi(input);
@@ -39,18 +39,18 @@ int menu_account_remove(void)
     if (
         close_account(atoi(input)) == 0)
     {
-        printf("Le compte n°%d n'a pas été trouvé!\n", account_id);
+        printf("Le compte n°%d n'a pas ete trouve!\n", account_id);
         return 1;
     }
 
-    printf("Le compte n°%d a été fermé !\n", account_id);
+    printf("Le compte n°%d a ete ferme !\n", account_id);
     return 0;
 }
 
 int menu_account_get(void)
 {
     char input[32];
-    printf("Veuillez saisir le numéro du compte : ");
+    printf("Veuillez saisir le numero du compte : ");
     scanf("%32s", input);
 
     const int account_id = atoi(input);
@@ -58,14 +58,14 @@ int menu_account_get(void)
 
     if (account == NULL)
     {
-        printf("Votre compte n°%d n'a pas été trouvé\n", account_id);
+        printf("Votre compte n°%d n'a pas ete trouve\n", account_id);
         return 1;
     }
 
-    printf("\nCompte trouvé !\n\n");
+    printf("\nCompte trouve !\n\n");
     printf("====================\n");
     printf("Identifiant du compte : %d\n", account->account_id);
-    printf("Propriétaire du compte : %s\n", account->account_holder);
+    printf("Proprietaire du compte : %s\n", account->account_holder);
     printf("Solde actuel : %.2f\n", account->balance);
     printf("====================\n\n");
 
@@ -83,9 +83,9 @@ int menu_account_list(void)
 
     unsigned int n = dict_length();
     if (n == 0)
-        printf("Il n'y a aucun compte enregistré à ce jour !\n");
+        printf("Il n'y a aucun compte enregistre a ce jour !\n");
     else
-        printf("Il a %u compte.s enregistré à ce jour !\n", n);
+        printf("Il a %u compte.s enregistre a ce jour !\n", n);
 
     while (node != NULL)
     {
@@ -93,7 +93,7 @@ int menu_account_list(void)
 
         printf("====================\n");
         printf("Identifiant du compte : %d\n", acc->account_id);
-        printf("Propriétaire du compte : %s\n", acc->account_holder);
+        printf("Proprietaire du compte : %s\n", acc->account_holder);
         printf("Solde actuel : %.2f\n", acc->balance);
         printf("====================\n\n");
 

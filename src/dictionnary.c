@@ -4,7 +4,7 @@
 
 #include "../include/types.h"
 
-// Pointeur de tête de la liste chaînée (dictionnaire)
+// Pointeur de tête de la liste chaînee (dictionnaire)
 Node *head = NULL;
 unsigned int dict_size = 0;
 
@@ -21,14 +21,14 @@ unsigned int dict_length()
 // Fonction pour ajouter un compte au dictionnaire
 void dict_set(char *account_holder, Account *account)
 {
-    // Allouer de la mémoire pour un nouveau nœud
+    // Allouer de la memoire pour un nouveau nœud
     Node *new_node = (Node *)malloc(sizeof(Node));
     if (new_node == NULL)
     {
         return;
     }
 
-    // Allouer de la mémoire pour une nouvelle structure Account
+    // Allouer de la memoire pour une nouvelle structure Account
     Account *new_account = (Account *)malloc(sizeof(Account));
     if (new_account == NULL)
     {
@@ -36,7 +36,7 @@ void dict_set(char *account_holder, Account *account)
         return;
     }
 
-    // Copier les données du compte dans la nouvelle structure Account
+    // Copier les donnees du compte dans la nouvelle structure Account
     new_account->account_id = account->account_id;
     strcpy(new_account->account_holder, account_holder);
     new_account->balance = account->balance;
@@ -45,7 +45,7 @@ void dict_set(char *account_holder, Account *account)
     new_node->account = new_account;
     new_node->next = NULL;
 
-    // Insérer le nouveau nœud au début de la liste chaînée
+    // Inserer le nouveau nœud au debut de la liste chaînee
     if (head == NULL)
     {
         head = new_node;
@@ -59,7 +59,7 @@ void dict_set(char *account_holder, Account *account)
     dict_size++;
 }
 
-// Fonction pour récupérer un compte à partir du nom du titulaire
+// Fonction pour recuperer un compte a partir du nom du titulaire
 Account *dict_get(char *account_holder)
 {
     Node *current = head;
@@ -71,11 +71,11 @@ Account *dict_get(char *account_holder)
         }
         current = current->next;
     }
-    // Si aucun compte correspondant n'est trouvé
+    // Si aucun compte correspondant n'est trouve
     return NULL;
 }
 
-// Fonction pour récupérer un compte à partir de l'identifiant du compte
+// Fonction pour recuperer un compte a partir de l'identifiant du compte
 Account *dict_get_from_id(const int account_id)
 {
     Node *current = head;
@@ -87,11 +87,11 @@ Account *dict_get_from_id(const int account_id)
         }
         current = current->next;
     }
-    // Si aucun compte correspondant n'est trouvé
+    // Si aucun compte correspondant n'est trouve
     return NULL;
 }
 
-// Fonction pour retirer un compte à partir du nom du titulaire
+// Fonction pour retirer un compte a partir du nom du titulaire
 void dict_remove(char *account_holder)
 {
     Node *current = head;
@@ -103,7 +103,7 @@ void dict_remove(char *account_holder)
         {
             if (prev == NULL)
             {
-                // Le compte à supprimer est en tête de liste
+                // Le compte a supprimer est en tête de liste
                 head = current->next;
             }
             else
@@ -111,7 +111,7 @@ void dict_remove(char *account_holder)
                 prev->next = current->next;
             }
 
-            // Libérer la mémoire allouée pour la structure Account et le nœud
+            // Liberer la memoire allouee pour la structure Account et le nœud
             free(current->account);
             free(current);
             return;
@@ -122,19 +122,19 @@ void dict_remove(char *account_holder)
         dict_size--;
     }
 
-    // Si aucun compte correspondant n'est trouvé
+    // Si aucun compte correspondant n'est trouve
 }
 
 void dict_free(void)
 {
-    // Libération de la mémoire allouée pour les comptes restants
+    // Liberation de la memoire allouee pour les comptes restants
     Node *current = head;
     Node *next;
     while (current != NULL)
     {
         next = current->next;
-        free(current->account); // Libérer la mémoire de la structure Account
-        free(current);          // Libérer la mémoire du nœud
+        free(current->account); // Liberer la memoire de la structure Account
+        free(current);          // Liberer la memoire du nœud
         current = next;
     }
 }
@@ -144,7 +144,7 @@ void dict_free(void)
 // Fonction principale pour tester l'utilisation du dictionnaire
 int main()
 {
-    // Création de quelques comptes
+    // Creation de quelques comptes
     Account acc1 = {1, "John Doe", 1000.0};
     Account acc2 = {2, "Jane Smith", 2000.0};
     Account acc3 = {3, "Bob Johnson", 500.0};
@@ -158,37 +158,37 @@ int main()
     char search_name[32];
     printf("Entrez le nom du titulaire pour rechercher le compte : ");
     fgets(search_name, sizeof(search_name), stdin);
-    search_name[strcspn(search_name, "\n")] = '\0'; // Supprimer le retour à la ligne de fgets
+    search_name[strcspn(search_name, "\n")] = '\0'; // Supprimer le retour a la ligne de fgets
 
     Account *found_account = dict_get(search_name);
     if (found_account != NULL)
     {
-        printf("Compte trouvé :\n");
+        printf("Compte trouve :\n");
         printf("ID du compte : %d\n", found_account->account_id);
         printf("Titulaire du compte : %s\n", found_account->account_holder);
         printf("Solde du compte : %.2f\n", found_account->balance);
     }
     else
     {
-        printf("Aucun compte trouvé pour le titulaire : %s\n", search_name);
+        printf("Aucun compte trouve pour le titulaire : %s\n", search_name);
     }
 
     // Suppression d'un compte par nom du titulaire
     char remove_name[32];
     printf("Entrez le nom du titulaire pour retirer le compte : ");
     fgets(remove_name, sizeof(remove_name), stdin);
-    remove_name[strcspn(remove_name, "\n")] = '\0'; // Supprimer le retour à la ligne de fgets
+    remove_name[strcspn(remove_name, "\n")] = '\0'; // Supprimer le retour a la ligne de fgets
 
     dict_remove(remove_name);
 
-    // Libération de la mémoire allouée pour les comptes restants
+    // Liberation de la memoire allouee pour les comptes restants
     Node *current = head;
     Node *next;
     while (current != NULL)
     {
         next = current->next;
-        free(current->account); // Libérer la mémoire de la structure Account
-        free(current);          // Libérer la mémoire du nœud
+        free(current->account); // Liberer la memoire de la structure Account
+        free(current);          // Liberer la memoire du nœud
         current = next;
     }
 

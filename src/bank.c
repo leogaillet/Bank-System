@@ -16,7 +16,7 @@ int initialize_bank_system(void)
 {
     srand(time(NULL));
 
-    // Initialiser les ressources nécessaires
+    // Initialiser les ressources necessaires
     if (load_accounts(accounts, &account_count) != 0)
     {
         printf("Impossible de charger les comptes bancaires !\n");
@@ -39,7 +39,7 @@ int initialize_bank_system(void)
 
 int shutdown_bank_system(void)
 {
-    // Libérer les ressources allouées
+    // Liberer les ressources allouees
     parse_dict_do_arr(&accounts, &account_count, MAX_ACCOUNTS, dict_get_node());
     for (int i = 0; i < account_count; i++)
     {
@@ -63,7 +63,7 @@ int shutdown_bank_system(void)
 
 int create_account(const char *account_holder, double initial_balance)
 {
-    // Créer un compte bancaire
+    // Creer un compte bancaire
     Account acc;
     acc.account_id = (rand() % MAX_ACCOUNTS);
     strcpy(acc.account_holder, account_holder);
@@ -111,7 +111,7 @@ double get_balance(int account_number)
 
 int deposit(int account_number, double amount)
 {
-    // Déposer de l'argent sur un compte
+    // Deposer de l'argent sur un compte
     return 0;
 }
 
@@ -123,7 +123,7 @@ int withdraw(int account_number, double amount)
 
 int transfer(int from_account_number, int to_account_number, double amount)
 {
-    // Transférer de l'argent entre comptes
+    // Transferer de l'argent entre comptes
     return 0;
 }
 

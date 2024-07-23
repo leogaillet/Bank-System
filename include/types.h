@@ -20,7 +20,7 @@ typedef struct Transaction
     unsigned char date[24];
 } Transaction;
 
-// Structure de nœud pour la liste chaînée
+// Structure de nœud pour la liste chaînee
 typedef struct Node
 {
     Account *account;
