@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/bank.h"
-#include "../include/dictionnary.h"
+#include "../include/linkedlist.h"
 #include "../include/menu.h"
 
 void menu(void);

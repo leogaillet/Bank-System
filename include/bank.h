@@ -8,18 +8,18 @@ int initialize_bank_system(void);
 int shutdown_bank_system(void);
 
 // Gestion des comptes
-int create_account(const char *account_holder, double initial_balance);
-int close_account(int account_number);
+int create_account(const char *account_name, const char *account_lastname, double initial_balance);
+int close_account(unsigned int account_id);
+Account *get_account(const char *account_name, char *account_lastname);
 Account *get_account_from_id(const int account_id);
-Account *get_account(const char *account_holder);
 
 // Operations de transations
-double get_balance(int account_number);
-int deposit(int account_number, double amount);
-int withdraw(int account_number, double amount);
-int transfer(int from_account_number, int to_account_number, double amount);
+double get_balance(unsigned int account_id);
+int deposit(unsigned int account_id, double amount);
+int withdraw(unsigned int account_id, double amount);
+int transfer(unsigned int from_account_id, unsigned int to_account_id, double amount);
 
 // Historiques des transactions
-int get_transaction_history(int account_number, Transaction *transactions, int max_transactions);
+int get_transaction_history(unsigned int account_id, Transaction *transactions, int max_transactions);
 
 #endif // BANK_H

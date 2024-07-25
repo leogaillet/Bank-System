@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/bank.h"
-#include "../include/dictionnary.h"
+#include "../include/linkedlist.h"
 #include "../include/types.h"
 
 int menu_exit(void)
@@ -19,9 +19,9 @@ int menu_account_add(void)
     printf("Quel est le montant du compte ? ");
     scanf("%10s", in_balance);
 
-    double account_balance = atof(in_balance);
+    // double account_balance = atof(in_balance);
 
-    int account_id = create_account(account_holder, account_balance);
+    int account_id = 0; // create_account(account_holder, account_balance);
 
     printf("Votre compte a ete cree, l'identifiant du compte est : %d\n", account_id);
 
@@ -65,7 +65,7 @@ int menu_account_get(void)
     printf("\nCompte trouve !\n\n");
     printf("====================\n");
     printf("Identifiant du compte : %d\n", account->account_id);
-    printf("Proprietaire du compte : %s\n", account->account_holder);
+    printf("Proprietaire du compte : %s\n", account->account_name);
     printf("Solde actuel : %.2f\n", account->balance);
     printf("====================\n\n");
 
@@ -79,26 +79,26 @@ int menu_account_balance(void)
 
 int menu_account_list(void)
 {
-    Node *node = dict_get_node();
+    // NodeHead *node_head;
 
-    unsigned int n = dict_length();
-    if (n == 0)
-        printf("Il n'y a aucun compte enregistre a ce jour !\n");
-    else
-        printf("Il a %u compte.s enregistre a ce jour !\n", n);
+    // unsigned int n = dict_length();
+    // if (n == 0)
+    //     printf("Il n'y a aucun compte enregistre a ce jour !\n");
+    // else
+    //     printf("Il a %u compte.s enregistre a ce jour !\n", n);
 
-    while (node != NULL)
-    {
-        Account *acc = node->account;
+    // while (node != NULL)
+    // {
+    //     Account *acc = node->account;
 
-        printf("====================\n");
-        printf("Identifiant du compte : %d\n", acc->account_id);
-        printf("Proprietaire du compte : %s\n", acc->account_holder);
-        printf("Solde actuel : %.2f\n", acc->balance);
-        printf("====================\n\n");
+    //     printf("====================\n");
+    //     printf("Identifiant du compte : %d\n", acc->account_id);
+    //     printf("Proprietaire du compte : %s\n", acc->account_name);
+    //     printf("Solde actuel : %.2f\n", acc->balance);
+    //     printf("====================\n\n");
 
-        node = node->next;
-    }
+    //     node = (AccountNode *)(node->base.next);
+    // }
 
     return 0;
 }
