@@ -25,9 +25,9 @@ typedef struct GenericNode
     void *data;
 } GenericNode;
 
-void init_generic_table(void *data_array, const int data_count, size_t data_size, DataInitializer init_func, NodeHead *node_head);
+void init_generic_table(void *data_array, const int data_count, size_t data_size, DataInitializer init_func, NodeHead **node_head);
 
-void free_generic_table(NodeHead *node_head, int (*compare_func)(void *, void *));
+void free_generic_table(NodeHead *node_head);
 
 int get_node_count(NodeHead *node_head);
 

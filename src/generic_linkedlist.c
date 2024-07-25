@@ -4,27 +4,28 @@
 #include "../include/types.h"
 #include "../include/generic_linkedlist.h"
 
-void init_generic_table(void *data_array, const int data_count, size_t data_size, DataInitializer init_func, NodeHead *node_head)
+void init_generic_table(void *data_array, const int data_count, size_t data_size, DataInitializer init_func, NodeHead **node_head)
 {
-    node_head->total_node = 0;
-    node_head->head = NULL;
+    (*node_head) = (NodeHead *)malloc(sizeof(NodeHead));
+    (*node_head)->total_node = 0;
+    (*node_head)->head = NULL;
     for (int i = 0; i < data_count; i++)
     {
         void *data = (void *)(data_array + data_size * i);
-        add_node(node_head, data, init_func);
+        add_node((*node_head), data, init_func);
     }
 }
 
-void free_generic_table(NodeHead *node_head, int (*compare_func)(void *, void *))
+void free_generic_table(NodeHead *node_head)
 {
-    Node *nd = node_head->head;
-    while (nd != NULL)
+    Node *current = node_head->head;
+    while (current != NULL)
     {
-        GenericNode *g_node = (GenericNode *)nd;
-        delete_node(node_head, g_node->data, compare_func);
-        nd = nd->next;
-    };
-    free(nd);
+        GenericNode *g_node = (GenericNode *)current;
+        node_head->head = current->next;
+        free(g_node);
+        current = node_head->head;
+    }
     free(node_head);
 }
 

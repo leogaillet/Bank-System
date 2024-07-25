@@ -12,7 +12,8 @@ Account accounts[MAX_ACCOUNTS];
 int transaction_count = 0;
 Transaction transactions[MAX_TRANSACTIONS];
 
-NodeHead *account_node, *transaction_node;
+NodeHead *account_list = NULL;
+NodeHead *transaction_list = NULL;
 
 int initialize_bank_system(void)
 {
@@ -25,7 +26,7 @@ int initialize_bank_system(void)
         return 1;
     }
 
-    init_generic_table(accounts, account_count, sizeof(Account), init_account_node, account_node);
+    init_generic_table(accounts, account_count, sizeof(Account), init_account_node, &account_list);
 
     if (load_transactions(transactions, &transaction_count) != 0)
     {
@@ -33,7 +34,7 @@ int initialize_bank_system(void)
         return 1;
     }
 
-    init_generic_table(transactions, transaction_count, sizeof(Transaction), init_transaction_node, transaction_node);
+    init_generic_table(transactions, transaction_count, sizeof(Transaction), init_transaction_node, &transaction_list);
 
     return 0;
 }
@@ -47,7 +48,7 @@ int shutdown_bank_system(void)
         return 1;
     }
 
-    free_generic_table(account_node, compare_account);
+    free_generic_table(account_list);
 
     if (save_transactions(transactions, transaction_count) != 0)
     {
@@ -55,7 +56,7 @@ int shutdown_bank_system(void)
         return 1;
     }
 
-    free_generic_table(transaction_node, compare_transaction);
+    free_generic_table(transaction_list);
 
     return 0;
 }
