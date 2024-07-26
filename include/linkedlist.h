@@ -9,6 +9,8 @@ ACCOUNT PART
 
 void init_account_node(void *node, void *data);
 
+int compare_account(void *data1, void *data2);
+
 int compare_account_id(void *data, void *account_id);
 
 int compare_account_name(void *data1, void *account_name_lastname);

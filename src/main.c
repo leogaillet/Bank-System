@@ -4,6 +4,7 @@
 #include "../include/bank.h"
 #include "../include/linkedlist.h"
 #include "../include/menu.h"
+#include "../include/types.h"
 
 void menu(void);
 
@@ -32,36 +33,37 @@ int main(void)
 
 void menu(void)
 {
-    char input[99];
+
+    struct MenuCommand commands[] = {
+        {"help", &menu_help},
+        {"graph", &menu_graph},
+        {"stop", &menu_exit},
+        {"list", &menu_account_list},
+        {"new", &menu_account_add},
+        {"remove", &menu_account_remove},
+        {"balance", &menu_account_balance},
+        {"get", &menu_account_get},
+        {"rmlast", &menu_account_remove_last}};
+    const int commandlength = sizeof(commands) / sizeof(commands[0]);
+
+    char input[32];
     do
     {
-        printf("Veuillez saisir une commande : ");
-        scanf("%99s", input);
+        ask("Veuillez saisir une commande :", input, 32);
 
-        if (strcmp(input, "help") == 0)
+        int found = 0;
+        int i = 0;
+        while (found == 0 && i < commandlength)
         {
+            if (strcmp(input, commands[i].command_name) == 0)
+            {
+                found = 1;
+                commands[i].menu_function();
+            }
+            i++;
         }
-        else if (strcmp(input, "stop") == 0)
-        {
-        }
-        else if (strcmp(input, "list") == 0)
-            menu_account_list();
 
-        else if (strcmp(input, "new") == 0)
-            menu_account_add();
-
-        else if (strcmp(input, "remove") == 0)
-            menu_account_remove();
-
-        else if (strcmp(input, "balance") == 0)
-        {
-        }
-        else if (strcmp(input, "account") == 0)
-            menu_account_get();
-        else if (strcmp(input, "transactions") == 0)
-        {
-        }
-        else
+        if (found == 0)
         {
             printf("Commande introuvable\n");
         }

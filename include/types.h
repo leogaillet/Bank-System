@@ -10,7 +10,7 @@ typedef struct Account
     unsigned int account_id;
     char account_name[32];
     char account_lastname[32];
-    char password[32];
+    char password[64];
     double balance;
 } Account;
 // #pragma pack(pop)
@@ -23,6 +23,12 @@ typedef struct Transaction
     double amount;
     unsigned char date[24];
 } Transaction;
+
+typedef struct MenuCommand
+{
+    char command_name[32];
+    int (*menu_function)(void);
+} MenuCommand;
 
 // // DICTIONNARY
 // typedef struct Entry
