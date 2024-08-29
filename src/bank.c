@@ -7,32 +7,47 @@
 #include "../include/config.h"
 #include "../include/linkedlist.h"
 
-#define ACCOUNT_NOT_FOUND -1
-
-Account accounts[MAX_ACCOUNTS];
-int account_index;
-Transaction transactions[MAX_TRANSACTIONS];
-int transaction_index;
-
 NodeHead *account_list = NULL;
 NodeHead *transaction_list = NULL;
+
+struct Database adb = {
+    "storage/accounts.dat",
+    CLOSED,
+    NULL};
 
 int initialize_bank_system(void)
 {
     srand(time(NULL));
 
-    account_index = 0;
+    tload(&adb, tload_accounts);
+
+    struct AccountDatabase *accDb = (struct AccountDatabase *)adb.contents;
+    int account_index = accDb->account_count;
+    Account **accounts_pointers = accDb->account_pointers;
+
+    // accounts -> tableau de pointeurs -> (*Account)[]
+
     // Initialiser les ressources necessaires pour les comptes
-    if (load_accounts(accounts, &account_index) != 0)
+    // if (load_accounts(&accounts, &account_index) !   = 0)
+    if (adb.status == FAILED)
     {
         printf("Impossible de charger les comptes bancaires !\n");
         return 1;
     }
 
-    printf("%d\n", account_index);
-    init_generic_table(&account_list, accounts, account_index, sizeof(Account), init_account_node);
+    for (int i = 0; i < account_index; i++)
+    {
+        printf("id %d | %p\n", accounts_pointers[i]->account_id, accounts_pointers[i]);
+    }
 
-    transaction_index = 0;
+    const long long int padding = 16 - (sizeof(Account) % 16);
+    init_generic_table(&account_list, accounts_pointers[0], account_index, sizeof(Account) + padding, init_account_node);
+    print_graph(account_list, print_account_id);
+
+    /*
+
+    int transaction_index = 0;
+    Transaction transactions[MAX_TRANSACTIONS];
     // Initialiser les ressources necessaires pour les transactions
     if (load_transactions(transactions, &transaction_index) != 0)
     {
@@ -42,25 +57,76 @@ int initialize_bank_system(void)
 
     init_generic_table(&transaction_list, transactions, transaction_index, sizeof(Transaction), init_transaction_node);
 
+    */
+
     return 0;
 }
 
 int shutdown_bank_system(void)
 {
 
-    int account_count = get_account_nodehead()->total_node;
-    Account saved_acc[account_count];
-    table_to_array(account_list, saved_acc, account_count, sizeof(Account));
-
-    if (save_accounts(saved_acc, account_count) != 0)
+    if (1)
     {
-        printf("Impossible de sauvegarder les comptes bancaires !\n");
-        return 1;
+        const int account_count = get_account_nodehead()->total_node;
+        print_graph(account_list, print_address);
+        print_graph(account_list, print_account_id);
+
+        printf("%d addresses ---\n", account_count);
+
+        for (struct Node *current = account_list->head; current != NULL; current = current->next)
+        {
+            GenericNode *gnode = (GenericNode *)current;
+            Account *account = (Account *)gnode->data;
+
+            printf("%p %d\n", account, account->account_id);
+        }
+
+        Account **saved_acc = (Account **)malloc(account_count * sizeof(Account *));
+        // const long long int padding = 16 - (sizeof(Account *) % 16);
+        table_to_array(account_list, saved_acc, account_count, sizeof(Account *));
+
+        printf("%d saved_acc ---\n", account_count);
+        for (int i = 0; i < account_count; i++)
+        {
+            Account *acc = saved_acc[i];
+            printf("%d %p\n", acc->account_id, acc);
+        }
+
+        struct AccountDatabase *accdb = (struct AccountDatabase *)adb.contents;
+        accdb->account_pointers = saved_acc;
+        accdb->account_count = account_count;
+
+        if (tsave(&adb, tsave_accounts) != 0)
+        {
+            printf("Impossible de sauvegarder les comptes bancaires !\n");
+            return 1;
+        }
     }
+    else
+    {
+        const long long int padding = 16 - (sizeof(Account) % 16);
+        Account saved_acc[] = {
+            {123, "a", "b", "c", 999.9},
+            {456, "d", "e", "f", 111.1},
+            {138712731, "ediuzhudized", "zfuiezfgyurezgfiuezrf", "boisiehfuieghfuerfuref", 1231231.1},
+            {789, "g", "h", "i", 888.8}};
+        const int account_count = 4;
+        table_to_array(account_list, &saved_acc, account_count, sizeof(Account) + padding);
+
+        if (save_accounts(saved_acc, account_count) != 0)
+        {
+            printf("Impossible de sauvegarder les comptes bancaires !\n");
+            return 1;
+        }
+    }
+
     // Liberer les ressources allouees
+    printf("a");
     free_generic_table(account_list);
 
-    int transaction_count = get_transaction_nodehead()->total_node;
+    printf("a");
+    /*
+        const int transaction_count = get_transaction_nodehead()->total_node;
     Transaction saved_tra[transaction_count];
     table_to_array(transaction_list, saved_tra, transaction_count, sizeof(Transaction));
 
@@ -71,6 +137,7 @@ int shutdown_bank_system(void)
     }
     // Liberer les ressources allouees
     free_generic_table(transaction_list);
+    */
 
     return 0;
 }
@@ -78,10 +145,6 @@ int shutdown_bank_system(void)
 NodeHead *get_account_nodehead()
 {
     return account_list;
-}
-Account *get_accounts()
-{
-    return accounts;
 }
 
 NodeHead *get_transaction_nodehead()
@@ -92,9 +155,6 @@ NodeHead *get_transaction_nodehead()
 // Operation avec les comptes
 Account *create_account(const char *account_name, const char *account_lastname, const char *password, double initial_balance)
 {
-    // Récuperer la derniere position du tableau des comptes
-    Account *account_ptr = &accounts[account_index];
-
     // Créer un nouveau compte
     Account account;
     account.account_id = rand() % MAX_ACCOUNTS;
@@ -103,11 +163,11 @@ Account *create_account(const char *account_name, const char *account_lastname, 
     strcpy_s(account.password, 64, password);
     account.balance = initial_balance;
 
+    Account *account_ptr = malloc(sizeof(Account));
     memcpy(account_ptr, &account, sizeof(Account));
 
     add_node(account_list, account_ptr, &init_account_node);
 
-    account_index++;
     return account_ptr;
 }
 
@@ -152,7 +212,7 @@ int deposit(unsigned int account_id, double amount)
     // Deposer de l'argent sur un compte
     Account *account = (Account *)find_node(account_list, &account_id, &compare_account_id);
     if (account == NULL)
-        return ACCOUNT_NOT_FOUND;
+        return -1;
 
     double positive_amount = amount > 0 ? amount : -amount;
     account->balance += positive_amount;
@@ -164,7 +224,7 @@ int withdraw(unsigned int account_id, double amount)
     // Retirer de l'argent d'un compte
     Account *account = (Account *)find_node(account_list, &account_id, &compare_account_id);
     if (account == NULL)
-        return ACCOUNT_NOT_FOUND;
+        return -1;
 
     double positive_amount = amount > 0 ? amount : -amount;
     account->balance -= positive_amount;
@@ -178,7 +238,7 @@ int transfer(unsigned int from_account_id, unsigned int to_account_id, double am
     Account *to_account = (Account *)find_node(account_list, &to_account_id, &compare_account_id);
 
     if (from_account == NULL || to_account == NULL)
-        return ACCOUNT_NOT_FOUND;
+        return -1;
 
     double positive_amount = amount > 0 ? amount : -amount;
     from_account->balance -= positive_amount;

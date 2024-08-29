@@ -1,17 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include "../include/types.h"
 #include "../include/generic_linkedlist.h"
 
 void init_generic_table(NodeHead **node_head, void *data_array, const int data_count, size_t data_size, DataInitializer init_func)
 {
-    (*node_head) = (NodeHead *)malloc(sizeof(NodeHead));
+    (*node_head) = malloc(sizeof(NodeHead));
     (*node_head)->total_node = 0;
     (*node_head)->head = NULL;
     for (int i = 0; i < data_count; i++)
     {
-        void *data = (void *)(data_array + data_size * i);
+        void *data = (char *)data_array + data_size * i;
+        printf("%p\n", data);
         add_node((*node_head), data, init_func);
     }
 }
@@ -31,17 +32,34 @@ void free_generic_table(NodeHead *node_head)
 
 void table_to_array(NodeHead *node_head, void *data_array, const int data_count, size_t data_size)
 {
+    /*
     int n = 0;
     Node *current = node_head->head;
     while (current != NULL && n < data_count)
     {
         GenericNode *g_node = (GenericNode *)current;
 
-        void *datapointer = (void *)(data_array + n * data_size);
+        void *datapointer = (char *)data_array + n * data_size;
+        printf("%p\n", datapointer);
         memcpy(datapointer, g_node->data, data_size);
 
         current = current->next;
         n++;
+    }
+    */
+
+    int i = 0;
+    for (
+        Node *curr = node_head->head;
+        curr != NULL;
+        curr = curr->next)
+    {
+        GenericNode *gnode = (GenericNode *)curr;
+        void *ptr = (char *)data_array + data_size * i;
+
+        printf("%p %p\n", ptr, gnode->data);
+        memcpy(ptr, &gnode->data, data_size);
+        i++;
     }
 }
 
@@ -109,7 +127,7 @@ void find_nodes(NodeHead *node_head, void *data, int (*compare_func)(void *, voi
         GenericNode *g_node = (GenericNode *)current;
         if (compare_func(g_node->data, data) == 0)
         {
-            void *data_ptr = (void *)(data_table_pointer + (*data_count) * data_size);
+            void *data_ptr = (char *)data_table_pointer + (*data_count) * data_size;
             memcpy(data_ptr, g_node->data, data_size);
 
             (*data_count)++;
@@ -130,4 +148,9 @@ void print_graph(NodeHead *node_head, void (*print_data)(void *))
             printf(" -> ");
     }
     printf("\n");
+}
+
+void print_address(void *data)
+{
+    printf("%p", data);
 }

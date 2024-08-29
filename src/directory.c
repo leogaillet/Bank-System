@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <strings.h>
+#include <string.h>
 #include <dirent.h>
 
 int directory_exists(const char *dir_name)

@@ -45,4 +45,6 @@ void find_nodes(NodeHead *node_head, void *data, int (*compare_func)(void *, voi
 
 void print_graph(NodeHead *node_head, void (*print_func)(void *));
 
+void print_address(void *data);
+
 #endif // GENERNIC_LINKEDLIST_H
