@@ -4,7 +4,7 @@ CFLAGS = -Wall -Werror -Iinclude
 SRC_DIR = src
 OBJ_DIR = build
 BIN_DIR = bin
-TARGET = $(BIN_DIR)/mon_projet
+TARGET = $(BIN_DIR)/bank
 
 # Trouver tous les fichiers .c dans SRC_DIR
 SRCS = $(wildcard $(SRC_DIR)/*.c)

@@ -21,11 +21,6 @@ int menu_exit(void)
     return 0;
 }
 
-int menu_help(void)
-{
-    return 0;
-}
-
 int menu_graph(void)
 {
     print_graph(get_account_nodehead(), print_account_id);
@@ -147,18 +142,32 @@ int menu_account_list(void)
     return 0;
 }
 
-int menu_account_remove_last(void)
+int menu_account_transfert(void)
 {
-    NodeHead *head = get_account_nodehead();
-    if (head->head == NULL)
-    {
-        printf("Il n'y a plus de compte disponibles !\n");
-        return 1;
-    }
+    char
+        input_from[32],
+        input_to[32],
+        input_balance[10];
 
-    GenericNode *g_node = (GenericNode *)head->head;
-    Account *account = (Account *)g_node->data;
-    delete_node(head, account, compare_account);
-    printf("Compte supprimé !\n");
+    ask("Veuillez saisir le numéro du compte à débiter :", input_from, 32);
+    unsigned int from = atoi(input_from);
+    ask("Veuillez saisir le numéro du compte à créditer :", input_to, 32);
+    unsigned int to = atoi(input_to);
+    ask("Quel est le montant ?", input_balance, 10);
+    double account_balance = strtod(input_balance, NULL);
+
+    Account
+        *from_acc = get_account_from_id(from),
+        *to_acc = get_account_from_id(to);
+
+    account_balance = account_balance < 0 ? -account_balance : account_balance;
+    from_acc->balance -= account_balance;
+    to_acc->balance += account_balance;
+
+    printf("Nouveaux montant des comptes :\n");
+
+    printf("\t- Débiteur n° %d : %.3f€\n", from_acc->account_id, from_acc->balance);
+    printf("\t+ Créditeur n° %d : %.3f€\n", to_acc->account_id, to_acc->balance);
+
     return 0;
 }

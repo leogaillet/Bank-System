@@ -12,7 +12,6 @@ void init_generic_table(NodeHead **node_head, void *data_array, const int data_c
     for (int i = 0; i < data_count; i++)
     {
         void *data = (char *)data_array + data_size * i;
-        printf("%p\n", data);
         add_node((*node_head), data, init_func);
     }
 }
@@ -22,9 +21,9 @@ void free_generic_table(NodeHead *node_head)
     Node *current = node_head->head;
     while (current != NULL)
     {
-        GenericNode *g_node = (GenericNode *)current;
+        GenericNode *gnode = (GenericNode *)current;
         node_head->head = current->next;
-        free(g_node);
+        free(gnode);
         current = node_head->head;
     }
     free(node_head);
@@ -32,32 +31,12 @@ void free_generic_table(NodeHead *node_head)
 
 void table_to_array(NodeHead *node_head, void *data_array, const int data_count, size_t data_size)
 {
-    /*
-    int n = 0;
-    Node *current = node_head->head;
-    while (current != NULL && n < data_count)
-    {
-        GenericNode *g_node = (GenericNode *)current;
-
-        void *datapointer = (char *)data_array + n * data_size;
-        printf("%p\n", datapointer);
-        memcpy(datapointer, g_node->data, data_size);
-
-        current = current->next;
-        n++;
-    }
-    */
-
     int i = 0;
-    for (
-        Node *curr = node_head->head;
-        curr != NULL;
-        curr = curr->next)
+    for (Node *curr = node_head->head; curr != NULL; curr = curr->next)
     {
         GenericNode *gnode = (GenericNode *)curr;
         void *ptr = (char *)data_array + data_size * i;
 
-        printf("%p %p\n", ptr, gnode->data);
         memcpy(ptr, &gnode->data, data_size);
         i++;
     }

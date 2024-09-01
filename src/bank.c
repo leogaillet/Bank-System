@@ -8,7 +8,6 @@
 #include "../include/linkedlist.h"
 
 NodeHead *account_list = NULL;
-NodeHead *transaction_list = NULL;
 
 struct Database adb = {
     "storage/accounts.dat",
@@ -19,125 +18,43 @@ int initialize_bank_system(void)
 {
     srand(time(NULL));
 
-    tload(&adb, tload_accounts);
+    database_load(&adb, database_account_function);
 
     struct AccountDatabase *accDb = (struct AccountDatabase *)adb.contents;
     int account_index = accDb->account_count;
     Account **accounts_pointers = accDb->account_pointers;
 
-    // accounts -> tableau de pointeurs -> (*Account)[]
-
-    // Initialiser les ressources necessaires pour les comptes
-    // if (load_accounts(&accounts, &account_index) !   = 0)
     if (adb.status == FAILED)
     {
         printf("Impossible de charger les comptes bancaires !\n");
         return 1;
     }
 
-    for (int i = 0; i < account_index; i++)
-    {
-        printf("id %d | %p\n", accounts_pointers[i]->account_id, accounts_pointers[i]);
-    }
-
     const long long int padding = 16 - (sizeof(Account) % 16);
     init_generic_table(&account_list, accounts_pointers[0], account_index, sizeof(Account) + padding, init_account_node);
-    print_graph(account_list, print_account_id);
-
-    /*
-
-    int transaction_index = 0;
-    Transaction transactions[MAX_TRANSACTIONS];
-    // Initialiser les ressources necessaires pour les transactions
-    if (load_transactions(transactions, &transaction_index) != 0)
-    {
-        printf("Impossible de charger les transactions !\n");
-        return 1;
-    }
-
-    init_generic_table(&transaction_list, transactions, transaction_index, sizeof(Transaction), init_transaction_node);
-
-    */
 
     return 0;
 }
 
 int shutdown_bank_system(void)
 {
+    const int account_count = get_account_nodehead()->total_node;
 
-    if (1)
+    Account **saved_acc = (Account **)malloc(account_count * sizeof(Account *));
+    table_to_array(account_list, saved_acc, account_count, sizeof(Account *));
+
+    struct AccountDatabase *accdb = (struct AccountDatabase *)adb.contents;
+    accdb->account_pointers = saved_acc;
+    accdb->account_count = account_count;
+
+    if (database_save(&adb, database_account_function) != 0)
     {
-        const int account_count = get_account_nodehead()->total_node;
-        print_graph(account_list, print_address);
-        print_graph(account_list, print_account_id);
-
-        printf("%d addresses ---\n", account_count);
-
-        for (struct Node *current = account_list->head; current != NULL; current = current->next)
-        {
-            GenericNode *gnode = (GenericNode *)current;
-            Account *account = (Account *)gnode->data;
-
-            printf("%p %d\n", account, account->account_id);
-        }
-
-        Account **saved_acc = (Account **)malloc(account_count * sizeof(Account *));
-        // const long long int padding = 16 - (sizeof(Account *) % 16);
-        table_to_array(account_list, saved_acc, account_count, sizeof(Account *));
-
-        printf("%d saved_acc ---\n", account_count);
-        for (int i = 0; i < account_count; i++)
-        {
-            Account *acc = saved_acc[i];
-            printf("%d %p\n", acc->account_id, acc);
-        }
-
-        struct AccountDatabase *accdb = (struct AccountDatabase *)adb.contents;
-        accdb->account_pointers = saved_acc;
-        accdb->account_count = account_count;
-
-        if (tsave(&adb, tsave_accounts) != 0)
-        {
-            printf("Impossible de sauvegarder les comptes bancaires !\n");
-            return 1;
-        }
-    }
-    else
-    {
-        const long long int padding = 16 - (sizeof(Account) % 16);
-        Account saved_acc[] = {
-            {123, "a", "b", "c", 999.9},
-            {456, "d", "e", "f", 111.1},
-            {138712731, "ediuzhudized", "zfuiezfgyurezgfiuezrf", "boisiehfuieghfuerfuref", 1231231.1},
-            {789, "g", "h", "i", 888.8}};
-        const int account_count = 4;
-        table_to_array(account_list, &saved_acc, account_count, sizeof(Account) + padding);
-
-        if (save_accounts(saved_acc, account_count) != 0)
-        {
-            printf("Impossible de sauvegarder les comptes bancaires !\n");
-            return 1;
-        }
-    }
-
-    // Liberer les ressources allouees
-    printf("a");
-    free_generic_table(account_list);
-
-    printf("a");
-    /*
-        const int transaction_count = get_transaction_nodehead()->total_node;
-    Transaction saved_tra[transaction_count];
-    table_to_array(transaction_list, saved_tra, transaction_count, sizeof(Transaction));
-
-    if (save_transactions(saved_tra, transaction_count) != 0)
-    {
-        printf("Impossible de sauvegarder les transactions !\n");
+        printf("Impossible de sauvegarder les comptes bancaires !\n");
         return 1;
     }
+
     // Liberer les ressources allouees
-    free_generic_table(transaction_list);
-    */
+    free_generic_table(account_list);
 
     return 0;
 }
@@ -145,11 +62,6 @@ int shutdown_bank_system(void)
 NodeHead *get_account_nodehead()
 {
     return account_list;
-}
-
-NodeHead *get_transaction_nodehead()
-{
-    return transaction_list;
 }
 
 // Operation avec les comptes
@@ -251,4 +163,54 @@ int get_transaction_history(unsigned int account_id, Transaction *transactions, 
 {
     // Retourner l'historique des transactions
     return -1;
+}
+
+void database_account_function(struct Database *db, enum DB_FUNCTION db_operation, FILE *f)
+{
+    if (db_operation == CREATE)
+    {
+        int c = 0;
+        fwrite(&c, sizeof(int), 1, f);
+    }
+    else if (db_operation == LOAD)
+    {
+
+        int c = 0;
+        fread(&c, sizeof(int), 1, f);
+
+        Account **accounts = (Account **)malloc(c * sizeof(Account *));
+
+        for (int i = 0; i < c; i++)
+        {
+            Account *account = (Account *)malloc(sizeof(Account));
+            fread(account, sizeof(Account), 1, f);
+            accounts[i] = account;
+        }
+
+        struct AccountDatabase *adb = (struct AccountDatabase *)malloc(sizeof(struct AccountDatabase));
+        adb->account_count = c;
+        adb->account_pointers = accounts;
+
+        db->contents = adb;
+    }
+    else if (db_operation == SAVE)
+    {
+
+        struct AccountDatabase *adb = (struct AccountDatabase *)db->contents;
+        const int c = adb->account_count;
+        Account **accounts = adb->account_pointers;
+
+        fwrite(&c, sizeof(int), 1, f);
+
+        for (int i = 0; i < c; i++)
+        {
+            Account *acc = accounts[i];
+            fwrite(acc, sizeof(Account), 1, f);
+            free(acc);
+        }
+
+        free(accounts);
+        free(adb);
+    }
+    return;
 }
